@@ -7,7 +7,9 @@ from django.http import HttpResponse
 from PIL import Image
 from django.utils.encoding import smart_str
 from charts.confusion_matrix import ConfusionMatrix
+from charts.salary_v_utilization import SalaryUtilization
 from charts.auc_roc import AUC_ROC_Score
+from datetime import datetime
 
 class ModelDocGenerator(viewsets.ViewSet):
 
@@ -36,8 +38,9 @@ class ModelDocGenerator(viewsets.ViewSet):
         csv_data = None
 
         plots = [
-            ConfusionMatrix,
-            AUC_ROC_Score
+            (ConfusionMatrix,[]),
+            (AUC_ROC_Score,[]),
+            (SalaryUtilization,["monthly_salary","utilization"])
         ]
 
         
@@ -52,7 +55,8 @@ class ModelDocGenerator(viewsets.ViewSet):
             dev_name = request.data["devname"],
             model_name = request.data["modelname"],
             overview  = request.data["overview"] , 
-            reason = request.data["content"])
+            reason = request.data["content"], 
+            date = datetime.utcnow())
         
         
         options = {
@@ -75,8 +79,8 @@ class ModelDocGenerator(viewsets.ViewSet):
         ]
 
         with csv_file.open() as file:
-            for cplot in plots:
-                pdfs.append(cplot(file,model_details.doc_id).generate())
+            for (cplot,params) in plots:
+                pdfs.append(cplot(file,model_details.doc_id).generate(*params))
 
         
         pdfkit.from_string(output_text, pdf_file , options = options)
