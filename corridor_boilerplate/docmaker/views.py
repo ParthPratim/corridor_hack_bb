@@ -37,7 +37,7 @@ class ModelDocGenerator(viewsets.ViewSet):
 
         plots = [
             ConfusionMatrix,
-            #AUC_ROC_Score
+            AUC_ROC_Score
         ]
 
         
