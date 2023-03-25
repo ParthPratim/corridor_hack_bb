@@ -21,6 +21,7 @@ class ConfusionMatrix(ModelPlot):
         classes = [0,1]
         cfm = confusion_matrix(target , output)
         df_cfm = pd.DataFrame(cfm, index = classes, columns = classes)
+        plt.title("Confusion Matrix")
         plt.figure(figsize = (10,7))
 
         cfm_plot = sn.heatmap(df_cfm, annot=True)

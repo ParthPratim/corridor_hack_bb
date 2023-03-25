@@ -12,6 +12,7 @@ class AUC_ROC_Score(ModelPlot):
         fpr, tpr, _ = roc_curve(target , output)
         plt.clf()
         plt.plot(fpr,tpr)
+        plt.title("AUC-ROC Curve")
         plt.ylabel('True Positive Rate')
         plt.xlabel('False Positive Rate')
         store_f = "./temp/%s_roc.pdf" % (self.doc_id)
