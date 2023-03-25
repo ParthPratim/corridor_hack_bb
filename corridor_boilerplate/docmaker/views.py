@@ -81,8 +81,6 @@ class ModelDocGenerator(viewsets.ViewSet):
         
         pdfkit.from_string(output_text, pdf_file , options = options)
 
-        
-        
         merger = pypdf.PdfMerger()
 
         for f in pdfs: 
@@ -94,9 +92,10 @@ class ModelDocGenerator(viewsets.ViewSet):
         
         merger.write(final_file) 
 
-        response = HttpResponse() # mimetype is replaced by content_type for django 1.7
+        fl = open(final_file,'rb')
+
+        response = HttpResponse( fl.read() ,content_type='application/force-download') # mimetype is replaced by content_type for django 1.7
         response['Content-Disposition'] = 'attachment; filename=%s' % smart_str(final_file)
-        response['X-Sendfile'] = "PDF Report.pdf"
 
         return response
     
