@@ -1,0 +1,1 @@
+JWT_SECRET = '64a3d0aae7'

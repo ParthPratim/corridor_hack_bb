@@ -1,0 +1,10 @@
+django
+djangorestframework
+markdown
+django-filter 
+pymongo[snappy,gssapi,srv,tls]
+dnspython
+mysqlclient
+djangorestframework-jwt
+django-cors-headers
+jinja2
