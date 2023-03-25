@@ -8,3 +8,10 @@ mysqlclient
 djangorestframework-jwt
 django-cors-headers
 jinja2
+pdfkit 
+numpy
+pandas
+scikit-learn
+seaborn
+matplotlib
+pypdf

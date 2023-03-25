@@ -1,0 +1,102 @@
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from django.http import JsonResponse
+from docmaker.models import ModelDetails
+import json, jinja2, pdfkit, os , pypdf
+from PIL import Image
+from charts.confusion_matrix import ConfusionMatrix
+from charts.auc_roc import AUC_ROC_Score
+
+class ModelDocGenerator(viewsets.ViewSet):
+
+    @action(detail=False , methods=['post'])
+    def generate(self, request):
+        
+        csv_file = request.FILES.get('file')
+        req_data =  json.loads(request.data["doc_request"])
+        section_1 = req_data["section_1"]
+        section_2 = req_data["section_2"]
+
+        if csv_file == None:
+            return JsonResponse({
+                "status" : "ERR",
+                "msg" : "Error uploading the file"
+            })
+        
+        
+
+        model_details = ModelDetails(devname = section_1["devname"],
+                                     modelname = section_1["modelname"],
+                                     overview = section_1["overview"], 
+                                     reason = section_2["content"])
+
+        model_details.save()
+        
+
+        csv_data = None
+
+        plots = [
+            ConfusionMatrix,
+            # AUC_ROC_Score
+        ]
+
+        
+            
+        template_loader = jinja2.FileSystemLoader(searchpath="./templates")
+        template_env = jinja2.Environment(loader=template_loader)
+        template_file = "letter_doc.html"
+        template = template_env.get_template(template_file)
+
+        
+        output_text = template.render(
+            dev_name = section_1["devname"],
+            model_name = section_1["modelname"],
+            overview  = section_1["overview"] , 
+            reason = section_2["content"])
+        
+        
+        options = {
+            'page-size': 'Letter',
+            'margin-top': '0.35in',
+            'margin-right': '0.75in',
+            'margin-bottom': '0.75in',
+            'margin-left': '0.75in',
+            'encoding': "UTF-8",
+            'no-outline': None,
+            'enable-local-file-access': "",
+        }
+
+        pdf_file =  "./temp/%s_html.pdf" % (model_details.doc_id)
+
+        final_file = "./temp/%s_report.pdf" % (model_details.doc_id)
+
+        pdfs = [
+            pdf_file,            
+        ]
+
+        with csv_file.open() as file:
+            for cplot in plots:
+                pdfs.append(cplot(file,model_details.doc_id).generate())
+
+        
+        pdfkit.from_string(output_text, pdf_file , options = options)
+
+        
+        
+        merger = pypdf.PdfMerger()
+
+        for f in pdfs:
+            pdfFile = open(f, 'rb')
+            pdfReader = pypdf.PdfReader(pdfFile)
+            merger.append(pdfReader)
+            pdfFile.close()
+        
+        
+        merger.write(final_file) 
+
+        return JsonResponse({
+            "status" : "SUC",
+            "doc_id" : model_details.doc_id
+        })
+    
+    

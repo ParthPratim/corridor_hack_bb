@@ -4,7 +4,7 @@ ARG API_LAYER_PORT
 COPY requirements.txt .
 
 RUN apt-get update && \
-    apt-get install default-libmysqlclient-dev && \
+    apt-get install -y default-libmysqlclient-dev wkhtmltopdf && \
     pip install -r requirements.txt 
 
 EXPOSE ${API_LAYER_PORT}

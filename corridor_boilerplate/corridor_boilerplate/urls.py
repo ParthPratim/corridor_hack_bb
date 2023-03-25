@@ -17,8 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('api/',include('users.urls')),
-    path('api/',include('chart.urls'))
+    path('api/',include('docmaker.urls')),
 ]
 
 for url in urlpatterns:
