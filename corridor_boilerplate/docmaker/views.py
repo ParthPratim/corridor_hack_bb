@@ -3,7 +3,9 @@ from rest_framework.decorators import action
 from django.http import JsonResponse
 from docmaker.models import ModelDetails
 import json, jinja2, pdfkit, os , pypdf
+from django.http import HttpResponse
 from PIL import Image
+from django.utils.encoding import smart_str
 from charts.confusion_matrix import ConfusionMatrix
 from charts.auc_roc import AUC_ROC_Score
 
@@ -37,7 +39,7 @@ class ModelDocGenerator(viewsets.ViewSet):
 
         plots = [
             ConfusionMatrix,
-            # AUC_ROC_Score
+            #AUC_ROC_Score
         ]
 
         
@@ -85,7 +87,7 @@ class ModelDocGenerator(viewsets.ViewSet):
         
         merger = pypdf.PdfMerger()
 
-        for f in pdfs:
+        for f in pdfs: 
             pdfFile = open(f, 'rb')
             pdfReader = pypdf.PdfReader(pdfFile)
             merger.append(pdfReader)
@@ -94,9 +96,10 @@ class ModelDocGenerator(viewsets.ViewSet):
         
         merger.write(final_file) 
 
-        return JsonResponse({
-            "status" : "SUC",
-            "doc_id" : model_details.doc_id
-        })
+        response = HttpResponse() # mimetype is replaced by content_type for django 1.7
+        response['Content-Disposition'] = 'attachment; filename=%s' % smart_str(final_file)
+        response['X-Sendfile'] = "PDF Report.pdf"
+
+        return response
     
     
