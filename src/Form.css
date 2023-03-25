@@ -27,6 +27,13 @@ body {
     text-align: left;
     
   }
+ .column-right {
+        display: flex;
+        justify-content: right;
+        align-items: right;
+        padding: 0rem 2rem;
+      }
+
   .login-form {
     display: flex;
     flex-direction: column;
@@ -56,3 +63,8 @@ body {
     }
   
   
+
+    form>label{
+        text-align:left;
+        margin-left:0;
+    }
