@@ -3,14 +3,23 @@
         {{ model_name }}
     </title>
     <body>
-        Developer Name : {{ dev_name }}<br>
-        Model Name : {{ model_name }}<br>
+        <h1><b>Detials about the Models</b></h1>
+        <b>Developer Name</b> : {{ dev_name }}<br>
+        <b>Model Name</b> : {{ model_name }}<br>
+        <b> Overview : </b><br>
+        {{ overview }}
+        <br>
+        <hr>
+        <h1><b>Reasons for using the model</b></h1>
+        {{ reason }}
+        <hr>
+        
 
     </body>
     <style>
         body{
             margin: 10px;
-            font-size: 18px;
+            font-size: 20px;
             font-family :Arial, Helvetica, sans-serif
         }
     </style>
