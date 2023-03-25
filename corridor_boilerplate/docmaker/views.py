@@ -15,9 +15,7 @@ class ModelDocGenerator(viewsets.ViewSet):
     def generate(self, request):
         
         csv_file = request.FILES.get('file')
-        req_data =  json.loads(request.data["doc_request"])
-        section_1 = req_data["section_1"]
-        section_2 = req_data["section_2"]
+        
 
         if csv_file == None:
             return JsonResponse({
@@ -27,10 +25,10 @@ class ModelDocGenerator(viewsets.ViewSet):
         
         
 
-        model_details = ModelDetails(devname = section_1["devname"],
-                                     modelname = section_1["modelname"],
-                                     overview = section_1["overview"], 
-                                     reason = section_2["content"])
+        model_details = ModelDetails(devname = request.data["devname"],
+                                     modelname = request.data["modelname"],
+                                     overview = request.data["overview"], 
+                                     reason = request.data["content"])
 
         model_details.save()
         
@@ -51,10 +49,10 @@ class ModelDocGenerator(viewsets.ViewSet):
 
         
         output_text = template.render(
-            dev_name = section_1["devname"],
-            model_name = section_1["modelname"],
-            overview  = section_1["overview"] , 
-            reason = section_2["content"])
+            dev_name = request.data["devname"],
+            model_name = request.data["modelname"],
+            overview  = request.data["overview"] , 
+            reason = request.data["content"])
         
         
         options = {
